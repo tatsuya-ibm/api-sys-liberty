@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Bank API Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>restfulWS-3.1</feature>
+        <feature>cdi-4.0</feature>
+        <feature>persistence-3.1</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>jsonp-2.1</feature>
+    </featureManager>
+
+    <!-- PostgreSQL JDBCドライバライブラリ -->
+    <library id="postgresql-lib">
+        <fileset dir="${server.config.dir}/resources/postgresql" includes="postgresql-*.jar"/>
+    </library>
+
+    <!-- データソース設定 -->
+    <dataSource id="bankDB" jndiName="jdbc/bankDB">
+        <jdbcDriver libraryRef="postgresql-lib"/>
+        <properties.postgresql
+            serverName="${DB_HOST}"
+            portNumber="${DB_PORT}"
+            databaseName="${DB_NAME}"
+            user="${DB_USER}"
+            password="${DB_PASSWORD}"
+            ssl="false"
+            sslmode="disable"/>
+        <connectionManager maxPoolSize="10" minPoolSize="2"/>
+    </dataSource>
+
+    <!-- HTTPエンドポイント -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="9080"
+                  httpsPort="9443" />
+
+    <!-- アプリケーション自動展開 -->
+    <applicationManager autoExpand="true"/>
+
+    <!-- Webアプリケーション設定 -->
+    <webApplication contextRoot="/api-sys" location="api-sys.war" />
+
+    <!-- SSL設定 -->
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+    
+    <!-- ログ設定 -->
+    <logging consoleLogLevel="INFO"
+             traceSpecification="*=info:jp.sample.*=fine"/>
+</server>

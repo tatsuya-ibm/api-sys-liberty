@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # PostgreSQLデータベース
+  postgres:
+    image: postgres:16-alpine
+    container_name: bank-postgres
+    environment:
+      POSTGRES_DB: bankdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bank-network
+
+  # OpenLibertyアプリケーション
+  app:
+    build: .
+    container_name: bank-api
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: bankdb
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+      TZ: Asia/Tokyo
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  bank-network:
+    driver: bridge
+
+# Made with Bob

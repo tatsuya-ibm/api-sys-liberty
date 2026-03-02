@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence 
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+    
+    <persistence-unit name="bankPU" transaction-type="JTA">
+        <jta-data-source>jdbc/bankDB</jta-data-source>
+        
+        <!-- エンティティクラス -->
+        <class>jp.sample.entity.Account</class>
+        <class>jp.sample.entity.TransactionHistory</class>
+        <class>jp.sample.entity.TransferTransaction</class>
+        
+        <properties>
+            <!-- スキーマ生成は手動DDLで行うため無効化 -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            
+            <!-- サーバープラットフォーム設定（Liberty用） -->
+            <property name="eclipselink.target-server" value="WebSphere_Liberty"/>
+            
+            <!-- ログ設定 -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+
+<!-- Made with Bob -->
